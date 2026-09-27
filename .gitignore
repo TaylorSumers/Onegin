@@ -1,0 +1,7 @@
+app.exe
+content.txt
+output_direct.txt
+output_original.txt
+output_reverse.txt
+.vscode/tasks.json
+src/vc140.pdb
