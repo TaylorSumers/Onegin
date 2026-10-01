@@ -47,34 +47,47 @@ char** getIndexCpy(char** index, size_t rowsAmt){
     return indexCpy;
 }
 
+void freeAll(char** index, char** indexCpy, char* content){
+    free(index);
+    free(indexCpy);
+    free(content);
+}
+
 int main(int argc, char *argv[]){
-    if(argc != 4){
-        puts("invalid arguments");
-        return 1;
-    }
-    const char* outputDirectFilename = argv[1];
-    const char* outputReverseFilename = argv[2];
-    const char* outputOriginalFilename = argv[3];
+    const char* outputDirectFilename = argc > 1 ? argv[1] : "output_direct.txt";
+    const char* outputReverseFilename = argc > 2 ? argv[2] : "output_reverse.txt";
+    const char* outputOriginalFilename = argc > 3 ? argv[3] : "output_original.txt";
 
     char* content = (char*)calloc(ROWS_AMT * ROW_LEN, sizeof(char));
     assert(content);
 
-    readFile(CONTENT_PATH, content, ROWS_AMT, ROW_LEN);
+    if(readFile(CONTENT_PATH, content, ROWS_AMT, ROW_LEN) == -1){
+        free(content);
+        return -1;
+    }
+
     char** index = getIndexArray(content, ROWS_AMT);
     char** indexCpy = getIndexCpy(index, ROWS_AMT);
 
     // Direct sort
     qsort(index, ROWS_AMT, sizeof(char*), &directCmp);
-    saveFile(outputDirectFilename, index, ROWS_AMT); 
+    if(saveFile(outputDirectFilename, index, ROWS_AMT) == -1){
+        freeAll(index, indexCpy, content);
+        return -1;
+    }
     
     // Reverse sort
     myQsort(index, ROWS_AMT, &reverseCmp);
-    saveFile(outputReverseFilename, index, ROWS_AMT);
+    if(saveFile(outputReverseFilename, index, ROWS_AMT) == -1){
+        freeAll(index, indexCpy, content);
+        return -1;
+    }
 
     // Original
-    saveFile(outputOriginalFilename, indexCpy, ROWS_AMT);
+    if(saveFile(outputOriginalFilename, indexCpy, ROWS_AMT) == -1){
+        freeAll(index, indexCpy, content);
+        return -1;
+    }
     
-    free(index);
-    free(indexCpy);
-    free(content);
+    freeAll(index, indexCpy, content);
 }

@@ -14,11 +14,6 @@ HEADERS := \
 	include/quick_sort.h  \
 	include/io.h
 
-OUTPUT := \
-	output_original.txt \
-	output_direct.txt \
-	output_reverse.txt
-
 .PHONY: all run clean
 
 all: $(APP)

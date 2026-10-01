@@ -4,30 +4,34 @@
 #include <assert.h>
 
 #include "io.h"
-void readFile(const char* path, char* buff, size_t rowsAmt, size_t rowLen){
+int readFile(const char* path, char* buff, size_t rowsAmt, size_t rowLen){
     assert(path);
     assert(buff);
 
     FILE* file = fopen(path, "rb");
+    if (file == NULL){
+        perror(path);
+        return -1;
+    }
     fread(buff, sizeof(char), rowsAmt * rowLen, file);
     fclose(file);
+
+    return 0;
 }
 
-void saveFile(const char* path, char** index, size_t rowsAmt){
+int saveFile(const char* path, char** index, size_t rowsAmt){
     assert(path);
     assert(index);
 
     FILE* file = fopen(path, "w");
+    if (file == NULL){
+        perror(path);
+        return -1;
+    }
     for (size_t i = 0; i < rowsAmt; i++){
         fputs(index[i], file);
     }
     fclose(file);
-}
-
-void printStrings(char* index[]){
-    assert(index);
-
-    for(size_t i = 0; i < 20; i++){
-        puts(index[i]);
-    }
+    
+    return 0;
 }
